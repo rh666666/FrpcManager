@@ -22,16 +22,28 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        ComboBox1 = New ComboBox()
         SuspendLayout()
+        ' 
+        ' ComboBox1
+        ' 
+        ComboBox1.FormattingEnabled = True
+        ComboBox1.Location = New Point(84, 87)
+        ComboBox1.Name = "ComboBox1"
+        ComboBox1.Size = New Size(151, 28)
+        ComboBox1.TabIndex = 0
         ' 
         ' Form1
         ' 
-        AutoScaleDimensions = New SizeF(9.0F, 20.0F)
+        AutoScaleDimensions = New SizeF(9F, 20F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(800, 450)
+        Controls.Add(ComboBox1)
         Name = "Form1"
         Text = "Form1"
         ResumeLayout(False)
     End Sub
+
+    Friend WithEvents ComboBox1 As ComboBox
 
 End Class
