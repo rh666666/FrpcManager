@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class Form1
+Partial Class FrpcManager
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -27,19 +27,20 @@ Partial Class Form1
         ' 
         ' ComboBox1
         ' 
+        ComboBox1.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBox1.FormattingEnabled = True
         ComboBox1.Location = New Point(84, 87)
         ComboBox1.Name = "ComboBox1"
         ComboBox1.Size = New Size(151, 28)
         ComboBox1.TabIndex = 0
         ' 
-        ' Form1
+        ' FrpcManager
         ' 
-        AutoScaleDimensions = New SizeF(9F, 20F)
+        AutoScaleDimensions = New SizeF(9.0F, 20.0F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(800, 450)
         Controls.Add(ComboBox1)
-        Name = "Form1"
+        Name = "FrpcManager"
         Text = "Form1"
         ResumeLayout(False)
     End Sub

@@ -1,8 +1,10 @@
 ﻿Imports System.IO
 Imports System.Windows.Forms
 
-Public Class Form1
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+Public Class FrpcManager
+    Private Sub FrpcManager_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' 定义窗口名称
+        Me.Text = "FrpcManager"
         ' 获取当前程序的目录
         Dim currentDirectory As String = Application.StartupPath
         ' 拼接 config 文件夹的路径
@@ -34,6 +36,9 @@ Public Class Form1
         ' 清空 ComboBox1 的 Items
         ComboBox1.Items.Clear()
 
+        ' 增加第一个选项：默认配置
+        ComboBox1.Items.Add("默认配置")
+
         ' 遍历 tomlFiles 数组
         For Each tomlFile As String In tomlFiles
             ' 获取文件名
@@ -41,5 +46,10 @@ Public Class Form1
             ' 将文件名添加到 ComboBox1 的 Items
             ComboBox1.Items.Add(fileName)
         Next
+
+        ' 如果 ComboBox1 的 Items 不为空，则默认选中第一项
+        If ComboBox1.Items.Count > 0 Then
+            ComboBox1.SelectedIndex = 0
+        End If
     End Sub
 End Class
