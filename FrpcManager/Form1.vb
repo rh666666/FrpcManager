@@ -12,7 +12,7 @@ Public Class Form1
         ' 不存在 frpc.exe 的错误信息
         Dim errorOfExePath As String = String.Format("发生错误:{0}程序 {1} 不存在", vbCrLf, frpcExePath)
 
-        ' 检测文件是否存在
+        ' 如果不存在 frpc.exe，则输出错误信息并终止程序
         If Not File.Exists(frpcExePath) Then
             MessageBox.Show(errorOfExePath)
             End
