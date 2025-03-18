@@ -40,29 +40,43 @@ Public Class ConfigureFileEditor
 
     Private Sub LoadConfiguration()
         If File.Exists(configPath) Then
-            Dim tomlContent = File.ReadAllText(configPath)
-            configData = Toml.ToModel(tomlContent)
+            Try
+                Dim tomlContent = File.ReadAllText(configPath)
+                configData = Toml.ToModel(tomlContent)
 
-            ' 读取服务器配置
-            serverAddr.Text = configData("serverAddr").ToString()
-            serverPort.Value = Decimal.Parse(configData("serverPort").ToString())
+                ' 读取服务器配置
+                serverAddr.Text = configData("serverAddr").ToString()
+                serverPort.Value = Decimal.Parse(configData("serverPort").ToString())
 
-            ' 读取代理配置（第一个代理）
-            Dim proxies = TryCast(configData("proxies"), List(Of Object))
-            If proxies IsNot Nothing AndAlso proxies.Count > 0 Then
-                Dim firstProxy = TryCast(proxies(0), Dictionary(Of String, Object))
-                userName.Text = firstProxy("name").ToString()
-                localIP.Text = firstProxy("localIP").ToString()
-                localPort.Value = Decimal.Parse(firstProxy("localPort").ToString())
-                remoteAddr.Text = serverAddr.Text
-                remotePort.Value = Decimal.Parse(firstProxy("remotePort").ToString())
-            End If
+                ' 读取代理配置（第一个代理）
+                Dim proxiesArray = TryCast(configData("proxies"), Tomlyn.Model.TomlTableArray)
+                If proxiesArray IsNot Nothing AndAlso proxiesArray.Count > 0 Then
+                    Dim firstProxyTable = proxiesArray(0)
+                    If firstProxyTable.ContainsKey("name") Then
+                        userName.Text = firstProxyTable("name").ToString()
+                    End If
+                    If firstProxyTable.ContainsKey("localIP") Then
+                        localIP.Text = firstProxyTable("localIP").ToString()
+                    End If
+                    If firstProxyTable.ContainsKey("localPort") Then
+                        localPort.Value = Decimal.Parse(firstProxyTable("localPort").ToString())
+                    End If
+                    If firstProxyTable.ContainsKey("remotePort") Then
+                        remotePort.Value = Decimal.Parse(firstProxyTable("remotePort").ToString())
+                    End If
+                    remoteAddr.Text = serverAddr.Text
+                Else
+                    MessageBox.Show("未找到有效的代理配置。")
+                End If
 
-            ' 显示配置文件名称
-            fileName.Text = Path.GetFileNameWithoutExtension(configPath)
-            If Not isNew Then
-                fileName.ReadOnly = True
-            End If
+                ' 显示配置文件名称
+                fileName.Text = Path.GetFileNameWithoutExtension(configPath)
+                If Not isNew Then
+                    fileName.ReadOnly = True
+                End If
+            Catch ex As Exception
+                MessageBox.Show($"加载配置文件时出错：{ex.Message}")
+            End Try
         End If
     End Sub
 
@@ -99,7 +113,7 @@ Public Class ConfigureFileEditor
             Dim newConfigPath = Path.Combine(configDirectory, fileName.Text & ".toml")
 
             If File.Exists(newConfigPath) Then
-                MessageBox.Show($"保存失败，配置'{fileName.Text}'已存在")
+                MessageBox.Show($"保存失败， 配置'{fileName.Text}'已存在")
                 Exit Sub
             End If
             File.WriteAllText(newConfigPath, tomlContent)

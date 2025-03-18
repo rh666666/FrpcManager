@@ -1,7 +1,5 @@
 ﻿Imports System.IO
-Imports System.Text.Unicode
 Imports System.Threading
-Imports System.Windows.Forms
 
 Public Class FrpcManager
     Private frpcProcess As Process
