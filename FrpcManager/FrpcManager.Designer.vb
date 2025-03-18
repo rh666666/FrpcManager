@@ -25,8 +25,8 @@ Partial Class FrpcManager
         ComboBox1 = New ComboBox()
         Button1 = New Button()
         Button2 = New Button()
-        TextBox1 = New TextBox()
         Button3 = New Button()
+        consoleLog = New RichTextBox()
         SuspendLayout()
         ' 
         ' ComboBox1
@@ -56,16 +56,6 @@ Partial Class FrpcManager
         Button2.Text = "使用配置"
         Button2.UseVisualStyleBackColor = True
         ' 
-        ' TextBox1
-        ' 
-        TextBox1.Location = New Point(431, 87)
-        TextBox1.Multiline = True
-        TextBox1.Name = "TextBox1"
-        TextBox1.ReadOnly = True
-        TextBox1.ScrollBars = ScrollBars.Vertical
-        TextBox1.Size = New Size(343, 297)
-        TextBox1.TabIndex = 3
-        ' 
         ' Button3
         ' 
         Button3.Location = New Point(212, 174)
@@ -75,27 +65,35 @@ Partial Class FrpcManager
         Button3.Text = "编辑配置"
         Button3.UseVisualStyleBackColor = True
         ' 
+        ' consoleLog
+        ' 
+        consoleLog.Dock = DockStyle.Right
+        consoleLog.Location = New Point(383, 0)
+        consoleLog.Name = "consoleLog"
+        consoleLog.Size = New Size(417, 450)
+        consoleLog.TabIndex = 5
+        consoleLog.Text = ""
+        ' 
         ' FrpcManager
         ' 
-        AutoScaleDimensions = New SizeF(9F, 20F)
+        AutoScaleDimensions = New SizeF(9.0F, 20.0F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = SystemColors.Control
         ClientSize = New Size(800, 450)
+        Controls.Add(consoleLog)
         Controls.Add(Button3)
-        Controls.Add(TextBox1)
         Controls.Add(Button2)
         Controls.Add(Button1)
         Controls.Add(ComboBox1)
         Name = "FrpcManager"
-        Text = "Form1"
+        Text = "FrpcManager"
         ResumeLayout(False)
-        PerformLayout()
     End Sub
 
     Friend WithEvents ComboBox1 As ComboBox
     Friend WithEvents Button1 As Button
     Friend WithEvents Button2 As Button
-    Friend WithEvents TextBox1 As TextBox
     Friend WithEvents Button3 As Button
+    Friend WithEvents consoleLog As RichTextBox
 
 End Class

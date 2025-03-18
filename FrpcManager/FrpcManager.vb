@@ -129,14 +129,41 @@ Public Class FrpcManager
                 End If
             End If
 
-            If Not Me.IsDisposed AndAlso TextBox1.InvokeRequired Then
-                TextBox1.Invoke(Sub()
-                                    TextBox1.AppendText(e.Data & vbCrLf)
-                                End Sub)
+            If Not Me.IsDisposed AndAlso consoleLog.InvokeRequired Then
+                consoleLog.Invoke(Sub()
+                                      consoleLog.AppendText(e.Data & vbCrLf)
+                                  End Sub)
             Else
-                TextBox1.AppendText(e.Data & vbCrLf)
+                consoleLog.AppendText(e.Data & vbCrLf)
             End If
         End If
     End Sub
 
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim editor As New ConfigureFileEditor With {
+            .IsNewFile = True,
+            .IsDefaultFile = False
+        }
+        editor.Show()
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        Dim currentDirectory As String = Application.StartupPath
+        Dim selectedConfigPath As String
+        If ComboBox1.Text = "默认配置" Then
+            selectedConfigPath = Path.Combine(currentDirectory, "frp", "frpc.toml")
+        Else
+            selectedConfigPath = Path.Combine(currentDirectory, "config", ComboBox1.Text & ".toml")
+        End If
+
+        Dim editor As New ConfigureFileEditor With {
+            .FilePath = selectedConfigPath,
+            .IsNewFile = False,
+            .IsDefaultFile = False
+        }
+        If ComboBox1.Text = "默认配置" Then
+            editor.IsDefaultFile = True
+        End If
+        editor.Show()
+    End Sub
 End Class
