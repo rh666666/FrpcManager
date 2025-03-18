@@ -32,29 +32,8 @@ Public Class FrpcManager
             End Try
         End If
 
-        ' 查找 config 目录下所有后缀名为 .toml 的文件
-        Dim tomlFiles() As String = Directory.GetFiles(configDirectoryPath, "*.toml")
-
-        ' 清空 ComboBox1 的 Items
-        ComboBox1.Items.Clear()
-
-        ' 如果存在 frp\frpc.toml，增加第一个选项：默认配置
-        Dim defaultTomlPath As String = Path.Combine(frpDirectoryPath, "frpc.toml")
-        If File.Exists(defaultTomlPath) Then
-            ComboBox1.Items.Add("默认配置")
-        End If
-        ' 如果 ComboBox1 的 Items 不为空，则默认选中第一项
-        If ComboBox1.Items.Count > 0 Then
-            ComboBox1.SelectedIndex = 0
-        End If
-
-        ' 遍历 tomlFiles 数组
-        For Each tomlFile As String In tomlFiles
-            ' 获取文件名
-            Dim fileName As String = Path.GetFileNameWithoutExtension(tomlFile)
-            ' 将文件名添加到 ComboBox1 的 Items
-            ComboBox1.Items.Add(fileName)
-        Next
+        ' 刷新下拉列表
+        RefreshComboBox()
 
     End Sub
 
@@ -102,7 +81,7 @@ Public Class FrpcManager
         frpcProcess.StartInfo.Arguments = arguments
         frpcProcess.StartInfo.UseShellExecute = False
         frpcProcess.StartInfo.RedirectStandardOutput = True
-        frpcProcess.StartInfo.CreateNoWindow = True
+        frpcProcess.StartInfo.CreateNoWindow = False
         frpcProcess.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8
 
         AddHandler frpcProcess.OutputDataReceived, AddressOf process_OutputDataReceived
@@ -142,6 +121,7 @@ Public Class FrpcManager
             .IsNewFile = True,
             .IsDefaultFile = False
         }
+        AddHandler editor.ConfigurationSaved, AddressOf RefreshComboBox
         editor.Show()
     End Sub
 
@@ -162,6 +142,80 @@ Public Class FrpcManager
         If ComboBox1.Text = "默认配置" Then
             editor.IsDefaultFile = True
         End If
+        AddHandler editor.ConfigurationSaved, AddressOf RefreshComboBox
         editor.Show()
+    End Sub
+
+    Private Sub RefreshComboBox()
+        ' 刷新下拉列表
+        Dim currentDirectory As String = Application.StartupPath
+        Dim configDirectoryPath As String = Path.Combine(currentDirectory, "config")
+        Dim frpDirectoryPath As String = Path.Combine(currentDirectory, "frp")
+
+        ' 查找 config 目录下所有后缀名为 .toml 的文件
+        Dim tomlFiles() As String = Directory.GetFiles(configDirectoryPath, "*.toml")
+
+        ' 清空 ComboBox1 的 Items
+        ComboBox1.Items.Clear()
+
+        ' 如果存在 frp\frpc.toml，增加第一个选项：默认配置
+        Dim defaultTomlPath As String = Path.Combine(frpDirectoryPath, "frpc.toml")
+        If File.Exists(defaultTomlPath) Then
+            ComboBox1.Items.Add("默认配置")
+        End If
+        ' 如果 ComboBox1 的 Items 不为空，则默认选中第一项
+        If ComboBox1.Items.Count > 0 Then
+            ComboBox1.SelectedIndex = 0
+        End If
+
+        ' 遍历 tomlFiles 数组
+        For Each tomlFile As String In tomlFiles
+            ' 获取文件名
+            Dim fileName As String = Path.GetFileNameWithoutExtension(tomlFile)
+            ' 将文件名添加到 ComboBox1 的 Items
+            ComboBox1.Items.Add(fileName)
+        Next
+    End Sub
+
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        ' 获取当前选中的配置项
+        Dim selectedConfig = ComboBox1.SelectedItem?.ToString()
+        If selectedConfig Is Nothing Then
+            MessageBox.Show("请选择要删除的配置。")
+            Return
+        End If
+
+        ' 检查是否为默认配置
+        If selectedConfig = "默认配置" Then
+            MessageBox.Show("默认配置不能删除。")
+            Return
+        End If
+
+        ' 确认是否删除
+        Dim confirmResult = MessageBox.Show($"确定要删除配置 '{selectedConfig}' 吗？", "确认删除", MessageBoxButtons.YesNo)
+        If confirmResult = DialogResult.No Then
+            Return
+        End If
+
+        ' 获取当前程序的目录
+        Dim currentDirectory As String = Application.StartupPath
+        ' 拼接 config 文件夹的路径
+        Dim configDirectoryPath As String = Path.Combine(currentDirectory, "config")
+        ' 拼接要删除的配置文件的完整路径
+        Dim configFilePath = Path.Combine(configDirectoryPath, selectedConfig & ".toml")
+
+        Try
+            ' 删除配置文件
+            If File.Exists(configFilePath) Then
+                File.Delete(configFilePath)
+                MessageBox.Show("配置文件删除成功。")
+                ' 刷新下拉列表
+                RefreshComboBox()
+            Else
+                MessageBox.Show("配置文件不存在，无法删除。")
+            End If
+        Catch ex As Exception
+            MessageBox.Show($"删除配置文件时出错：{ex.Message}")
+        End Try
     End Sub
 End Class
