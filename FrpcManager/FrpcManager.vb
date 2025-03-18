@@ -1,7 +1,11 @@
 ﻿Imports System.IO
+Imports System.Text.Unicode
+Imports System.Threading
 Imports System.Windows.Forms
 
 Public Class FrpcManager
+    Private frpcProcess As Process
+    ' 处理窗口加载事件
     Private Sub FrpcManager_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' 定义窗口名称
         Me.Text = "FrpcManager"
@@ -36,8 +40,15 @@ Public Class FrpcManager
         ' 清空 ComboBox1 的 Items
         ComboBox1.Items.Clear()
 
-        ' 增加第一个选项：默认配置
-        ComboBox1.Items.Add("默认配置")
+        ' 如果存在 frp\frpc.toml，增加第一个选项：默认配置
+        Dim defaultTomlPath As String = Path.Combine(frpDirectoryPath, "frpc.toml")
+        If File.Exists(defaultTomlPath) Then
+            ComboBox1.Items.Add("默认配置")
+        End If
+        ' 如果 ComboBox1 的 Items 不为空，则默认选中第一项
+        If ComboBox1.Items.Count > 0 Then
+            ComboBox1.SelectedIndex = 0
+        End If
 
         ' 遍历 tomlFiles 数组
         For Each tomlFile As String In tomlFiles
@@ -47,9 +58,85 @@ Public Class FrpcManager
             ComboBox1.Items.Add(fileName)
         Next
 
-        ' 如果 ComboBox1 的 Items 不为空，则默认选中第一项
-        If ComboBox1.Items.Count > 0 Then
-            ComboBox1.SelectedIndex = 0
+    End Sub
+
+    ' 处理窗口关闭事件
+    Private Sub FrpcManager_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+        ' 如果 frpcProcess 不为空，则关闭进程
+        If frpcProcess IsNot Nothing AndAlso Not frpcProcess.HasExited Then
+            Dim closeThread As New Thread(Sub()
+                                              Try
+                                                  ' 停止异步读取输出
+                                                  frpcProcess.CancelOutputRead()
+
+                                                  If frpcProcess.CloseMainWindow() Then
+                                                      If Not frpcProcess.WaitForExit(5000) Then
+                                                          frpcProcess.Kill()
+                                                          frpcProcess.WaitForExit()
+                                                      End If
+                                                  Else
+                                                      frpcProcess.Kill()
+                                                      frpcProcess.WaitForExit()
+                                                  End If
+                                              Catch ex As Exception
+                                                  MessageBox.Show($"关闭 frpc.exe 时出错：{ex.Message}")
+                                              End Try
+                                          End Sub)
+            closeThread.Start()
         End If
     End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        ' 定义启动参数
+        Dim currentDirectory As String = Application.StartupPath
+        Dim frpExePath As String = Path.Combine(currentDirectory, "frp", "frpc.exe")
+        Dim arguments As String
+
+        ' 定义默认配置
+        If ComboBox1.Text = "默认配置" Then
+            arguments = $"-c {Path.Combine(currentDirectory, "frp", "frpc.toml")}"
+        Else
+            arguments = $"-c {Path.Combine(currentDirectory, "config", ComboBox1.Text)}.toml"
+        End If
+
+        frpcProcess = New Process()
+        frpcProcess.StartInfo.FileName = frpExePath
+        frpcProcess.StartInfo.Arguments = arguments
+        frpcProcess.StartInfo.UseShellExecute = False
+        frpcProcess.StartInfo.RedirectStandardOutput = True
+        frpcProcess.StartInfo.CreateNoWindow = True
+        frpcProcess.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8
+
+        AddHandler frpcProcess.OutputDataReceived, AddressOf process_OutputDataReceived
+
+        Try
+            frpcProcess.Start()
+            frpcProcess.BeginOutputReadLine()
+        Catch ex As Exception
+            MessageBox.Show($"启动 frpc.exe 时出错，{ex.Message}")
+        End Try
+    End Sub
+
+    Private Sub process_OutputDataReceived(sender As Object, e As DataReceivedEventArgs)
+        If Not String.IsNullOrEmpty(e.Data) Then
+            If e.Data.Contains("start proxy success") Then
+                If Me.InvokeRequired Then
+                    Me.Invoke(Sub()
+                                  MessageBox.Show("启动成功！")
+                              End Sub)
+                Else
+                    MessageBox.Show("启动成功！")
+                End If
+            End If
+
+            If Not Me.IsDisposed AndAlso TextBox1.InvokeRequired Then
+                TextBox1.Invoke(Sub()
+                                    TextBox1.AppendText(e.Data & vbCrLf)
+                                End Sub)
+            Else
+                TextBox1.AppendText(e.Data & vbCrLf)
+            End If
+        End If
+    End Sub
+
 End Class
