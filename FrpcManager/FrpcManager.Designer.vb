@@ -26,6 +26,7 @@ Partial Class FrpcManager
         Button1 = New Button()
         Button2 = New Button()
         TextBox1 = New TextBox()
+        Button3 = New Button()
         SuspendLayout()
         ' 
         ' ComboBox1
@@ -39,7 +40,7 @@ Partial Class FrpcManager
         ' 
         ' Button1
         ' 
-        Button1.Location = New Point(266, 87)
+        Button1.Location = New Point(84, 174)
         Button1.Name = "Button1"
         Button1.Size = New Size(94, 29)
         Button1.TabIndex = 1
@@ -48,7 +49,7 @@ Partial Class FrpcManager
         ' 
         ' Button2
         ' 
-        Button2.Location = New Point(266, 151)
+        Button2.Location = New Point(266, 87)
         Button2.Name = "Button2"
         Button2.Size = New Size(94, 29)
         Button2.TabIndex = 2
@@ -65,12 +66,22 @@ Partial Class FrpcManager
         TextBox1.Size = New Size(343, 297)
         TextBox1.TabIndex = 3
         ' 
+        ' Button3
+        ' 
+        Button3.Location = New Point(212, 174)
+        Button3.Name = "Button3"
+        Button3.Size = New Size(94, 29)
+        Button3.TabIndex = 4
+        Button3.Text = "编辑配置"
+        Button3.UseVisualStyleBackColor = True
+        ' 
         ' FrpcManager
         ' 
         AutoScaleDimensions = New SizeF(9F, 20F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = SystemColors.Control
         ClientSize = New Size(800, 450)
+        Controls.Add(Button3)
         Controls.Add(TextBox1)
         Controls.Add(Button2)
         Controls.Add(Button1)
@@ -85,5 +96,6 @@ Partial Class FrpcManager
     Friend WithEvents Button1 As Button
     Friend WithEvents Button2 As Button
     Friend WithEvents TextBox1 As TextBox
+    Friend WithEvents Button3 As Button
 
 End Class
