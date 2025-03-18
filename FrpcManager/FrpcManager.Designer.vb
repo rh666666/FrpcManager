@@ -27,6 +27,7 @@ Partial Class FrpcManager
         Button2 = New Button()
         Button3 = New Button()
         consoleLog = New RichTextBox()
+        Button4 = New Button()
         SuspendLayout()
         ' 
         ' ComboBox1
@@ -53,7 +54,7 @@ Partial Class FrpcManager
         Button2.Name = "Button2"
         Button2.Size = New Size(94, 29)
         Button2.TabIndex = 2
-        Button2.Text = "使用配置"
+        Button2.Text = "启动配置"
         Button2.UseVisualStyleBackColor = True
         ' 
         ' Button3
@@ -74,12 +75,22 @@ Partial Class FrpcManager
         consoleLog.TabIndex = 5
         consoleLog.Text = ""
         ' 
+        ' Button4
+        ' 
+        Button4.Location = New Point(159, 234)
+        Button4.Name = "Button4"
+        Button4.Size = New Size(94, 29)
+        Button4.TabIndex = 6
+        Button4.Text = "删除配置"
+        Button4.UseVisualStyleBackColor = True
+        ' 
         ' FrpcManager
         ' 
-        AutoScaleDimensions = New SizeF(9.0F, 20.0F)
+        AutoScaleDimensions = New SizeF(9F, 20F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = SystemColors.Control
         ClientSize = New Size(800, 450)
+        Controls.Add(Button4)
         Controls.Add(consoleLog)
         Controls.Add(Button3)
         Controls.Add(Button2)
@@ -95,5 +106,6 @@ Partial Class FrpcManager
     Friend WithEvents Button2 As Button
     Friend WithEvents Button3 As Button
     Friend WithEvents consoleLog As RichTextBox
+    Friend WithEvents Button4 As Button
 
 End Class

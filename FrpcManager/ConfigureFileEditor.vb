@@ -6,6 +6,7 @@ Public Class ConfigureFileEditor
     Private isNew As Boolean
     Private isDefault As Boolean
     Private configData As Object
+    Public Event ConfigurationSaved()
 
     ' 添加新文件判断属性
     Public Property IsNewFile As Boolean
@@ -122,6 +123,9 @@ Public Class ConfigureFileEditor
         End If
 
         MessageBox.Show("保存成功")
+        ' 保存成功提示之后触发事件
+        RaiseEvent ConfigurationSaved()
+        Me.Close()
     End Sub
 
     Private Sub serverAddr_TextChanged(sender As Object, e As EventArgs) Handles serverAddr.TextChanged
