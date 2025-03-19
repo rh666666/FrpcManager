@@ -21,7 +21,7 @@ Public Class ConfigureFileEditor
     ' 添加默认文件判断属性
     Public Property IsDefaultFile As Boolean
         Get
-            Return IsDefault
+            Return isDefault
         End Get
         Set(value As Boolean)
             isDefault = value
